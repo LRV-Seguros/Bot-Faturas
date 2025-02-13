@@ -5,11 +5,13 @@ from selenium.webdriver import Keys
 from seleniumbase import Driver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium import webdriver
 import requests
 from PyPDF2 import PdfReader
 import calendar
 from datetime import datetime
-
 
 lista_pdfs = []
 lista_documentos = []
@@ -26,11 +28,11 @@ meses = {
 def quiver1(dados, arquivos):
     diretorio_corrente = os.getcwd()
     arquivos = [os.path.join(diretorio_corrente, nome) for nome in arquivos[1:]]
-    driver = Driver(uc=True, headless=False)
+    driver = webdriver.Chrome()
     driver.maximize_window()
     link = 'https://www.corretor-online.com.br/default.aspx'
     while True:
-        driver.uc_open(fr'{link}')
+        driver.get(link)
         corretora = 'lrv'
         login = 'Cadastro.FaturaTransporte'
         senha = 'Lrv@2025'
@@ -398,11 +400,11 @@ def quiver2(dados, arquivos):
     diretorio_corrente = os.getcwd()
     arquivos = [os.path.join(diretorio_corrente, nome) for nome in arquivos[1:]]
     print(arquivos)
-    driver = Driver(uc=True, headless=False)
+    driver = webdriver.Chrome()
     driver.maximize_window()
     link = 'https://www.corretor-online.com.br/default.aspx'
     while True:
-        driver.uc_open(fr'{link}')
+        driver.get(link)
         corretora = 'lrv'
         login = 'Cadastro.FaturaTransporte'
         senha = 'Lrv@2025'
@@ -1490,9 +1492,12 @@ def axa_b(texto):
     print(dados)
     return dados
 
+
 def swiss(texto):
     dados = []
     texto = texto.split('\n')
+
+    # Buscando o ramo (não usado no preenchimento, mas mantido para debug)
     cont = 0
     for linha in texto:
         if 'Nº da Proposta:' in linha:
@@ -1508,69 +1513,74 @@ def swiss(texto):
             print(ramo)
             break
         cont = cont + 1
+
+    # Buscando número da apólice, endosso e proposta
     cont = 0
     for linha in texto:
-        if ' Carga' in linha:
-            apolice = texto[cont + 1]
-            endosso = texto[cont + 2]
-            proposta = texto[cont + 3]
-            print(apolice)
-            print(endosso)
-            print(proposta)
-            dados.append(apolice)
-            dados.append(endosso)
-            dados.append(proposta)
-
-
+        if 'Carga' in linha:
+            apolice = texto[cont + 1].strip()
+            endosso = texto[cont + 2].strip()
+            # Mantido para referência, mas não usado
+            n_proposta = texto[cont + 3].strip()
+            dados.append(apolice)  # dados[0] - N° apólice coletiva
+            dados.append(endosso)  # dados[1] - N° endosso
             break
         cont = cont + 1
+
+    # Buscando datas de vigência e emissão
     cont = 0
     for linha in texto:
         if 'Modalidade:' in linha:
-            emissao = texto[cont + 2].split(' ')[0]
-            vigencia = texto[cont + 4].split('.')[0]
+            emissao = texto[cont + 2].split(' ')[0].strip()
+            vigencia = texto[cont + 4].split('.')[0].strip()
             print(emissao)
             print(vigencia)
+
+            # Processando a data de vigência
             data = vigencia
             mes_texto, ano = data.split("/")
             mes = meses[mes_texto.lower()]
             ultimo_dia = calendar.monthrange(int(ano), int(mes))[1]
             primeiro_dia = f"01/{mes}/{ano}"
             ultimo_dia_formatado = f"{ultimo_dia}/{mes}/{ano}"
-            data_proposta = primeiro_dia
-            dados.append(data_proposta)
-            inicio_vig = primeiro_dia
-            dados.append(inicio_vig)
-            fim_vig = ultimo_dia_formatado
-            dados.append(fim_vig)
-            dados.append(emissao)
 
+            # Adicionando as datas na ordem correta
+            # dados[2] - Data da proposta (usando data de emissão)
+            dados.append(emissao)
+            dados.append(primeiro_dia)  # dados[3] - Data inicial vigência
+            # dados[4] - Data inicial vigência (duplicada)
+            dados.append(primeiro_dia)
+            # dados[5] - Data final vigência
+            dados.append(ultimo_dia_formatado)
+            dados.append(emissao)  # dados[6] - Data emissão
             break
         cont = cont + 1
+
+    # Buscando prêmio líquido
     cont = 0
     for linha in texto:
         if 'Prêmio Total (R$):' in linha:
-            premio_liquido = texto[cont + 1].split(' ')[-1]
-            premio_bruto = texto[cont + 5].split(' ')[-1]
+            premio_liquido = texto[cont + 1].split(' ')[-1].strip()
+            premio_bruto = texto[cont + 5].split(' ')[-1].strip()
             print(premio_liquido)
-            dados.append(premio_liquido)
+            dados.append(premio_liquido)  # dados[7] - Prêmio líquido
             print(premio_bruto)
             break
         cont = cont + 1
+
+    # Buscando data de vencimento
     cont = 0
     for linha in texto:
         if 'CONDIÇÕES GERAIS' in linha:
-            vencimento = texto[cont - 1]
+            vencimento = texto[cont - 1].strip()
             print(vencimento)
-            dados.append(vencimento)
+            dados.append(vencimento)  # dados[8] - Data vencimento
             break
         cont = cont + 1
 
     print(dados)
+
     return dados
-
-
-
 
 listaFeitos = []
 
@@ -1691,19 +1701,23 @@ if len(lista_documentos) > 0:
                         arquivo.write(fr'Inserida a fatura da apolice {dados[0]} no dia {data_formatada}' + "\n")
             elif teste.find('xa') > 0:
                 try:
+                    dados = None  # Inicializa a variável dados
                     try:
                         dados = axa(texto)
                     except:
                         dados = axa_b(texto)
-                    quiver2(dados, documento)
-                    listaFeitos.append(caminho)
+                    
+                    if dados:  # Verifica se dados foi preenchido com sucesso
+                        quiver2(dados, documento)
+                        listaFeitos.append(caminho)
 
                 except Exception as e:
                     print(e)
+                
                 with open(nome_arquivo, "a") as arquivo:
                     data_atual = datetime.now()
                     data_formatada = data_atual.strftime("%d/%m/%Y")
-                    if dados:
+                    if dados:  # Só escreve no arquivo se dados existir
                         arquivo.write(fr'Inserida a fatura da apolice {dados[0]} no dia {data_formatada}' + "\n")
             elif teste.find('ig') > 0:
                 try:
