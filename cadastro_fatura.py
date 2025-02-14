@@ -279,6 +279,7 @@ def quiver1(dados, arquivos):
                 driver.execute_script("arguments[0].value = arguments[1];", campo_iof, "7,38")
                 time.sleep(.2)
                 campo_iof.send_keys(Keys.TAB)
+                time.sleep(.2)
                 break
             except:
                 time.sleep(1)
@@ -400,7 +401,6 @@ def quiver1(dados, arquivos):
         print('Número de usuarios excedido')
 
     driver.quit()
-
 
 def quiver2(dados, arquivos):
     diretorio_corrente = os.getcwd()
@@ -663,7 +663,7 @@ def quiver2(dados, arquivos):
                 driver.execute_script("arguments[0].value = arguments[1];", campo_iof, "7,38")
                 time.sleep(.2)
                 campo_iof.send_keys(Keys.TAB)
-
+                time.sleep(.2)
                 break
             except:
                 time.sleep(1)
