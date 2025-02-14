@@ -273,6 +273,12 @@ def quiver1(dados, arquivos):
                 for char in dados[7].replace('.', ''):
                     campo_premio_liq.send_keys(char)
                     time.sleep(.2)
+                campo_iof = driver.find_element(By.XPATH, '//*[@id="Documento_PercIof"]')
+                campo_iof.clear()
+                time.sleep(.2)
+                driver.execute_script("arguments[0].value = arguments[1];", campo_iof, "7,38")
+                time.sleep(.2)
+                campo_iof.send_keys(Keys.TAB)
                 break
             except:
                 time.sleep(1)
@@ -651,6 +657,13 @@ def quiver2(dados, arquivos):
                 for char in dados[6].replace('.', ''):
                     campo_premio_liq.send_keys(char)
                     time.sleep(.2)
+                campo_iof = driver.find_element(By.XPATH, '//*[@id="Documento_PercIof"]')
+                campo_iof.clear()
+                time.sleep(.2)
+                driver.execute_script("arguments[0].value = arguments[1];", campo_iof, "7,38")
+                time.sleep(.2)
+                campo_iof.send_keys(Keys.TAB)
+
                 break
             except:
                 time.sleep(1)
@@ -1189,7 +1202,6 @@ def sura(texto):
     dados = [apolice, fatura, data_proposta, inicio_vig, fim_vig, data_emissao, premio_liquido, vencimento]
     return dados
 
-
 def berkley(texto):
     dados = []
     texto =  texto.split('\n')
@@ -1204,12 +1216,7 @@ def berkley(texto):
         cont = cont + 1
 
     apolice = texto[2].split(' ')[4]
-    print(apolice)
-    dados.append(apolice)
     endosso = texto[2].split(' ')[5]
-    print(endosso)
-    dados.append(endosso)
-    dados.append(proposta)
     emissao = texto[2].split(' ')[-1]
     print(emissao)
     cont = 0
@@ -1253,11 +1260,9 @@ def berkley(texto):
             print(vencimento)
             dados.append(vencimento)
             break
-        cont = cont + 1
 
     print(dados)
     return dados
-
 
 def axa(texto):
     texto = texto.split('\n')
@@ -1306,7 +1311,6 @@ def axa(texto):
                 mes = meses[partes[1].lower()]  # Converter o mês para minúsculo para evitar problemas
                 ano = partes[2]
                 emissao = f"{dia}/{mes}/{ano}"
-
 
             print(emissao)
             break
@@ -1706,14 +1710,14 @@ if len(lista_documentos) > 0:
                         dados = axa(texto)
                     except:
                         dados = axa_b(texto)
-                    
+
                     if dados:  # Verifica se dados foi preenchido com sucesso
                         quiver2(dados, documento)
                         listaFeitos.append(caminho)
 
                 except Exception as e:
                     print(e)
-                
+
                 with open(nome_arquivo, "a") as arquivo:
                     data_atual = datetime.now()
                     data_formatada = data_atual.strftime("%d/%m/%Y")
