@@ -1027,44 +1027,50 @@ def fairfax(texto):
     dados = []
     texto = texto.split('\n')
     cont = 0
+
+    # Busca e armazena o ramo (para referência)
     for linha in texto:
         if 'Ramo :' in linha:
             ramo = texto[cont]
             ramo = ramo.split('-')[-1]
-            print(ramo)
+            print(f"Ramo: {ramo}")
             break
         cont = cont + 1
 
+    # Busca e armazena o número da apólice
     cont = 0
     for linha in texto:
         if 'Apólice Nº :' in linha:
             apolice = texto[cont]
             apolice = apolice.split(':')[-1].replace(' ', '')
-            print(apolice)
-            dados.append(apolice)
+            print(f"Apólice: {apolice}")
+            dados.append(apolice)  # dados[0] - número da apólice
             break
         cont = cont + 1
 
+    # Busca e armazena o número do endosso
     cont = 0
     for linha in texto:
         if 'Endosso Nº:' in linha:
             endosso = texto[cont]
             endosso = endosso.split(':')[-1].replace(' ', '')
-            print(endosso)
-            dados.append(endosso)
+            print(f"Endosso: {endosso}")
+            dados.append(endosso)  # dados[1] - número do endosso
             break
         cont = cont + 1
 
+    # Busca e armazena a data de emissão primeiro
     cont = 0
     for linha in texto:
-        if 'Proposta Nº' in linha:
-            fatura = texto[cont]
-            fatura = fatura.split(':')[-1].replace(' ', '')
-            print(fatura)
-            dados.append(fatura)
+        if 'Data de Emissão:' in linha:
+            emissao = texto[cont]
+            emissao = emissao.split(' ')[0]
+            print(f"Data de Emissão: {emissao}")
+            dados.append(emissao)  # dados[2] - data da proposta (usando data de emissão)
             break
         cont = cont + 1
 
+    # Busca e armazena as datas de vigência
     cont = 0
     for linha in texto:
         if 'Data de Emissão:' in linha:
@@ -1074,24 +1080,16 @@ def fairfax(texto):
             inicio_vig = inicio_vig[inicio:]
             inicio = inicio_vig.find('dia') + 4
             fim_vigencia = inicio_vig[inicio:inicio + 10]
-            # inicio_vigencia = emissao.split(' ')[0]
-            print(inicio_vigencia)
-            print(fim_vigencia)
-            dados.append(inicio_vigencia)
-            dados.append(inicio_vigencia)
-            dados.append(fim_vigencia)
+            print(f"Início Vigência: {inicio_vigencia}")
+            print(f"Fim Vigência: {fim_vigencia}")
+            dados.append(inicio_vigencia)  # dados[3] - data inicial vigência
+            dados.append(inicio_vigencia)  # dados[4] - data inicial vigência (duplicada)
+            dados.append(fim_vigencia)     # dados[5] - data final vigência
+            dados.append(emissao)          # dados[6] - data emissão
+            break
+        cont = cont + 1
 
-            break
-        cont = cont + 1
-    cont = 0
-    for linha in texto:
-        if 'Data de Emissão:' in linha:
-            emissao = texto[cont]
-            emissao = emissao.split(' ')[0]
-            print(emissao)
-            dados.append(emissao)
-            break
-        cont = cont + 1
+    # Busca e armazena o prêmio líquido
     cont = 0
     for linha in texto:
         if 'Prêmio Líquido' in linha:
@@ -1102,24 +1100,24 @@ def fairfax(texto):
             premio_liquido = premio[:fim]
             inicio = premio.rfind('R$') + 3
             premio_bruto = premio[inicio:]
-            print(premio_liquido)
-            print(premio_bruto)
-            dados.append(premio_liquido)
-
+            print(f"Prêmio Líquido: {premio_liquido}")
+            dados.append(premio_liquido)  # dados[7] - prêmio líquido
             break
         cont = cont + 1
+
+    # Busca e armazena a data de vencimento
     cont = 0
     for linha in texto:
         if 'VENC.' in linha:
             vencimento = texto[cont + 1].rstrip()
             vencimento = vencimento.split(' ')[-1]
-            print(vencimento)
-            dados.append(vencimento)
+            print(f"Vencimento: {vencimento}")
+            dados.append(vencimento)  # dados[8] - data vencimento
             break
         cont = cont + 1
+
     print(dados)
     return dados
-
 
 def sura(texto):
     dados = []
