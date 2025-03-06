@@ -1,4 +1,22 @@
 def berkley(texto):
+    """
+    Extrai informações relevantes de uma fatura da Berkley a partir do texto do PDF.
+
+    Args:
+        texto (str): Texto completo extraído do PDF da fatura
+
+    Returns:
+        list: Lista contendo os seguintes dados na ordem:
+            [0] - Número da apólice
+            [1] - Número do endosso
+            [2] - Data da proposta (usando data de emissão)
+            [3] - Data inicial de vigência
+            [4] - Data inicial de vigência (duplicada)
+            [5] - Data final de vigência
+            [6] - Data de emissão
+            [7] - Prêmio líquido
+            [8] - Data de vencimento
+    """
     dados = []
     texto = texto.split('\n')
     cont = 0
@@ -21,11 +39,6 @@ def berkley(texto):
     print(f"Endosso: {endosso}")
     print(f"Emissão: {emissao}")
 
-    # Adiciona apólice e endosso
-    dados.append(apolice)      # dados[0] - número da apólice
-    dados.append(endosso)      # dados[1] - número do endosso
-    dados.append(emissao)      # dados[2] - data da proposta (usando data de emissão)
-
     # Busca datas de vigência
     cont = 0
     for linha in texto:
@@ -44,18 +57,11 @@ def berkley(texto):
             break
         cont = cont + 1
 
-    # Adiciona vigências e emissão
-    dados.append(inicio_vig)   # dados[3] - data inicial vigência
-    dados.append(inicio_vig)   # dados[4] - data inicial vigência (duplicada)
-    dados.append(fim_vig)      # dados[5] - data final vigência
-    dados.append(emissao)      # dados[6] - data emissão
-
     # Busca prêmio líquido
     for linha in texto:
         if 'Prêmio Líquido:' in linha:
             premio_liquido = linha.split(' ')[-1]
             print(f"Prêmio líquido: {premio_liquido}")
-            dados.append(premio_liquido)  # dados[7] - prêmio líquido
             break
 
     # Busca prêmio total (mantido para referência)
@@ -70,8 +76,15 @@ def berkley(texto):
         if 'Vencimentos:' in linha:
             vencimento = linha.split(' ')[-1]
             print(f"Vencimento: {vencimento}")
-            dados.append(vencimento)  # dados[8] - data vencimento
             break
 
-    print("Dados compilados:", dados)
+    dados.append(apolice)
+    dados.append(endosso)
+    dados.append(emissao)
+    dados.append(inicio_vig)
+    dados.append(fim_vig)
+    dados.append(emissao)
+    dados.append(premio_liquido)
+
+    print(dados)
     return dados

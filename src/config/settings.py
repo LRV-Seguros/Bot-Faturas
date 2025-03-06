@@ -4,7 +4,6 @@ CORRETOR_ONLINE = {
     'login': 'Cadastro.FaturaTransporte',
     'senha': 'Lrv@2025'
 }
-
 EMAIL = {
     'url': 'https://lrvseguros.com.br:2096/cpsess5607446155/3rdparty/roundcube/?_task=mail&_mbox=INBOX',
     'usuario': 'cadastrofaturatransportes@lrvseguros.com.br',

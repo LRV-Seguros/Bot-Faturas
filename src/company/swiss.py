@@ -8,10 +8,27 @@ meses = {
 }
 
 def swiss(texto):
+    """
+    Extrai informações relevantes de uma fatura da Swiss a partir do texto do PDF.
+
+    Args:
+        texto (str): Texto completo extraído do PDF da fatura
+
+    Returns:
+        list: Lista contendo os seguintes dados na ordem:
+            [0] - Número da apólice coletiva
+            [1] - Número do endosso
+            [2] - Data da proposta (usando data de emissão)
+            [3] - Data inicial de vigência (primeiro dia do mês)
+            [4] - Data inicial de vigência (duplicada)
+            [5] - Data final de vigência (último dia do mês)
+            [6] - Data de emissão
+            [7] - Prêmio líquido
+            [8] - Data de vencimento
+    """
     dados = []
     texto = texto.split('\n')
 
-    # Buscando o ramo (não usado no preenchimento, mas mantido para debug)
     cont = 0
     for linha in texto:
         if 'Nº da Proposta:' in linha:
@@ -24,11 +41,10 @@ def swiss(texto):
             for r in ram:
                 if r.isupper():
                     ramo = ramo + r
-            print(ramo)
+            print(f"Ramo: {ramo}")
             break
         cont = cont + 1
 
-    # Buscando número da apólice, endosso e proposta
     cont = 0
     for linha in texto:
         if 'Carga' in linha:
@@ -36,8 +52,6 @@ def swiss(texto):
             endosso = texto[cont + 2].strip()
             # Mantido para referência, mas não usado
             n_proposta = texto[cont + 3].strip()
-            dados.append(apolice)  # dados[0] - N° apólice coletiva
-            dados.append(endosso)  # dados[1] - N° endosso
             break
         cont = cont + 1
 
@@ -47,8 +61,8 @@ def swiss(texto):
         if 'Modalidade:' in linha:
             emissao = texto[cont + 2].split(' ')[0].strip()
             vigencia = texto[cont + 4].split('.')[0].strip()
-            print(emissao)
-            print(vigencia)
+            print(f"Emissão: {emissao}")
+            print(f"Vigencia: {vigencia}")
 
             # Processando a data de vigência
             data = vigencia
@@ -57,16 +71,6 @@ def swiss(texto):
             ultimo_dia = calendar.monthrange(int(ano), int(mes))[1]
             primeiro_dia = f"01/{mes}/{ano}"
             ultimo_dia_formatado = f"{ultimo_dia}/{mes}/{ano}"
-
-            # Adicionando as datas na ordem correta
-            # dados[2] - Data da proposta (usando data de emissão)
-            dados.append(emissao)
-            dados.append(primeiro_dia)  # dados[3] - Data inicial vigência
-            # dados[4] - Data inicial vigência (duplicada)
-            dados.append(primeiro_dia)
-            # dados[5] - Data final vigência
-            dados.append(ultimo_dia_formatado)
-            dados.append(emissao)  # dados[6] - Data emissão
             break
         cont = cont + 1
 
@@ -76,9 +80,8 @@ def swiss(texto):
         if 'Prêmio Total (R$):' in linha:
             premio_liquido = texto[cont + 1].split(' ')[-1].strip()
             premio_bruto = texto[cont + 5].split(' ')[-1].strip()
-            print(premio_liquido)
-            dados.append(premio_liquido)  # dados[7] - Prêmio líquido
-            print(premio_bruto)
+            print(f"Prêmio líquido: {premio_liquido}")
+            print(f"Prêmio bruto: {premio_bruto}")
             break
         cont = cont + 1
 
@@ -87,10 +90,19 @@ def swiss(texto):
     for linha in texto:
         if 'CONDIÇÕES GERAIS' in linha:
             vencimento = texto[cont - 1].strip()
-            print(vencimento)
-            dados.append(vencimento)  # dados[8] - Data vencimento
+            print(f"Vencimento: {vencimento}")
             break
         cont = cont + 1
+
+    dados.append(apolice)
+    dados.append(endosso)
+    dados.append(emissao)
+    dados.append(primeiro_dia)
+    dados.append(primeiro_dia)
+    dados.append(ultimo_dia_formatado)
+    dados.append(emissao)
+    dados.append(premio_liquido)
+    dados.append(vencimento)
 
     print(dados)
 

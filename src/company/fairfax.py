@@ -1,4 +1,22 @@
 def fairfax(texto):
+    """
+    Extrai informações relevantes de uma fatura da Fairfax a partir do texto do PDF.
+
+    Args:
+        texto (str): Texto completo extraído do PDF da fatura
+
+    Returns:
+        list: Lista contendo os seguintes dados na ordem:
+            [0] - Número da apólice
+            [1] - Número do endosso
+            [2] - Data da proposta (usando data de emissão)
+            [3] - Data inicial de vigência
+            [4] - Data inicial de vigência (duplicada)
+            [5] - Data final de vigência
+            [6] - Data de emissão
+            [7] - Prêmio líquido
+            [8] - Data de vencimento
+    """
     dados = []
     texto = texto.split('\n')
     cont = 0
@@ -19,7 +37,6 @@ def fairfax(texto):
             apolice = texto[cont]
             apolice = apolice.split(':')[-1].replace(' ', '')
             print(f"Apólice: {apolice}")
-            dados.append(apolice)  # dados[0] - número da apólice
             break
         cont = cont + 1
 
@@ -30,7 +47,6 @@ def fairfax(texto):
             endosso = texto[cont]
             endosso = endosso.split(':')[-1].replace(' ', '')
             print(f"Endosso: {endosso}")
-            dados.append(endosso)  # dados[1] - número do endosso
             break
         cont = cont + 1
 
@@ -41,7 +57,6 @@ def fairfax(texto):
             emissao = texto[cont]
             emissao = emissao.split(' ')[0]
             print(f"Data de Emissão: {emissao}")
-            dados.append(emissao)  # dados[2] - data da proposta (usando data de emissão)
             break
         cont = cont + 1
 
@@ -57,10 +72,6 @@ def fairfax(texto):
             fim_vigencia = inicio_vig[inicio:inicio + 10]
             print(f"Início Vigência: {inicio_vigencia}")
             print(f"Fim Vigência: {fim_vigencia}")
-            dados.append(inicio_vigencia)  # dados[3] - data inicial vigência
-            dados.append(inicio_vigencia)  # dados[4] - data inicial vigência (duplicada)
-            dados.append(fim_vigencia)     # dados[5] - data final vigência
-            dados.append(emissao)          # dados[6] - data emissão
             break
         cont = cont + 1
 
@@ -76,7 +87,7 @@ def fairfax(texto):
             inicio = premio.rfind('R$') + 3
             premio_bruto = premio[inicio:]
             print(f"Prêmio Líquido: {premio_liquido}")
-            dados.append(premio_liquido)  # dados[7] - prêmio líquido
+
             break
         cont = cont + 1
 
@@ -87,9 +98,17 @@ def fairfax(texto):
             vencimento = texto[cont + 1].rstrip()
             vencimento = vencimento.split(' ')[-1]
             print(f"Vencimento: {vencimento}")
-            dados.append(vencimento)  # dados[8] - data vencimento
+
             break
         cont = cont + 1
+
+    dados.append(apolice)
+    dados.append(endosso)
+    dados.append(emissao)
+    dados.append(inicio_vigencia)
+    dados.append(fim_vigencia)
+    dados.append(premio_liquido)
+    dados.append(vencimento)
 
     print(dados)
     return dados
