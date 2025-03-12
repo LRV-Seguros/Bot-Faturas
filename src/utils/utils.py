@@ -65,3 +65,18 @@ def registrar_fatura(nome_arquivo, dados):
         data_formatada = data_atual.strftime("%d/%m/%Y")
         if dados:
             arquivo.write(fr'Inserida a fatura da apolice {dados[0]} no dia {data_formatada}' + "\n")
+
+def registrar_error (nome_arquivo, seguradora, fatura, erro):
+    """
+    Registra um erro no arquivo de log.
+
+    Args:
+        nome_arquivo: Nome do arquivo de log
+        seguradora: Nome da seguradora
+        fatura: Número da fatura
+        erro: Mensagem de erro
+    """
+    with open(nome_arquivo, "a") as arquivo:
+        data_atual = datetime.now()
+        data_formatada = data_atual.strftime("%d/%m/%Y %H:%M:%S")
+        arquivo.write(f'Erro ao processar a fatura {fatura} da seguradora {seguradora} no dia {data_formatada}: {erro}' + "\n" "- Fatura/Apólice {fatura} - Endosso {endosso}")

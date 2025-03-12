@@ -65,6 +65,7 @@ def aig(texto):
     dados.append(apolice)
     dados.append(endosso)
     dados.append(inicio_vigencia)
+    dados.append(inicio_vigencia)
     dados.append(fim_vigencia)
     dados.append(emissao)
     dados.append(premio_liquido)
