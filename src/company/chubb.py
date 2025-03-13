@@ -1,8 +1,14 @@
 import re
+from src.company.teste.chubb_internacional import chubb_internacional
+from src.company.teste.chubb_nacional import chubb_nacional
+from src.company.teste.chubb_rct import chubb_rct
+from src.company.teste.chubb_rctr import chubb_rctr
+from src.company.teste.chubb_rcf import chubb_rcf
 
 def chubb(texto):
     """
-    Extrai informações de uma fatura da Chubb a partir do texto do PDF.
+    Função principal para extração de dados de faturas da Chubb.
+    Identifica o tipo de apólice e direciona para a função específica.
 
     Args:
         texto (str): Texto completo extraído do PDF
@@ -10,90 +16,39 @@ def chubb(texto):
     Returns:
         list: Lista contendo os dados formatados na ordem requerida para cadastro
     """
-    dados = []
-    # Divide o texto em linhas para iterar corretamente
     linhas = texto.split('\n')
 
-    # Imprime algumas linhas para debug
-    print("Primeiras 90 linhas do documento:")
-    for i in range(min(90, len(linhas))):
-        print(f"{i}: {linhas[i]}")
-
-    nome = None
-    if len(linhas) > 34:
-        linha_nome = linhas[34]
-        nome = linha_nome.strip()
-        print(f"Nome extraído: {nome}")
-
-    ramo = None
-    if len(linhas) > 39:
-        linha_ramo = linhas[39]
-        linha_ramo = linha_ramo.strip()
-        print(f"Ramo extraído: {linha_ramo}")
-
+    # Identificar tipo de apólice
     apolice = None
-    if len(linhas) > 32:
-        linha_apolice = linhas[32]
-        if "28." in linha_apolice:
-            match = re.search(r'28\.\d+\.\d+\.\d+', linha_apolice)
-            if match:
-                apolice = match.group(0)
-                partes = apolice.split('.')
-                apolice = '.'.join(partes[:-1])
-                print(f"Apólice extraída: {apolice}")
-
-    endosso = None
-    if len(linhas) > 33:
-        linha_endosso = linhas[33]
-        endosso = linha_endosso.strip()
-        print(f"Endosso extraído: {endosso}")
-
-    premio_liquido = None
-    if len(linhas) > 87:
-        linha_premio = linhas[87]
-        premio_liquido = linha_premio.strip()
-        print(f"Prêmio líquido extraído: {premio_liquido}")
-
-    inicio_vigencia = None
-    fim_vigencia = None
-    for i in range(60, 64):
+    for i in range(10, 50):
         if i < len(linhas):
             linha = linhas[i]
-            datas = re.findall(r'\d{2}/\d{2}/\d{4}', linha)
-            if len(datas) >= 2:  # Se encontrar pelo menos duas datas na linha
-                inicio_vigencia = datas[0]
-                fim_vigencia = datas[-1]
-                print(f"Início de vigência extraído: {inicio_vigencia}")
-                print(f"Fim de vigência extraído: {fim_vigencia}")
-                break
+            if "28." in linha or "24." in linha:
+                match = re.search(r'(28|24)\.\d+\.\d+\.\d+', linha)
+                if match:
+                    apolice_completa = match.group(0)
+                    partes = apolice_completa.split('.')
+                    if len(partes) >= 3:
+                        tipo_apolice = f"{partes[0]}.{partes[1]}"
+                        print(f"Tipo de apólice identificado: {tipo_apolice}")
+                        break
 
-    emissao = None
-    if len(linhas) > 13:
-        linha_emissao = linhas[13]
-        if "/" in linha_emissao:
-            match = re.search(r'\d{2}/\d{2}/\d{4}', linha_emissao)
-            if match:
-                emissao = match.group(0)
-                print(f"Emissão extraída: {emissao}")
-
-    vencimento = None
-    if len(linhas) > 17:
-        linha_vencimento = linhas[17]
-        if "/" in linha_vencimento:
-            match = re.search(r'\d{2}/\d{2}/\d{4}', linha_vencimento)
-            if match:
-                vencimento = match.group(0)
-                print(f"Vencimento extraído: {vencimento}")
-
-        dados.append(apolice)
-        dados.append(endosso)
-        dados.append(emissao)  # Data da proposta (usando data de emissão)
-        dados.append(inicio_vigencia)
-        dados.append(inicio_vigencia)
-        dados.append(fim_vigencia)
-        dados.append(emissao)
-        dados.append(premio_liquido)
-        dados.append(vencimento)
-
-    print(f"Dados extraídos: {dados}")
-    return dados
+    # Chamada da função específica com base no tipo de apólice
+    if tipo_apolice == "28.22":
+        print("Processando endosso de TRANSP.INTERNACIONAL")
+        return chubb_internacional(texto)
+    elif tipo_apolice == "28.21":
+        print("Processando endosso de TRANSP. NACIONAL")
+        return chubb_nacional(texto)
+    elif tipo_apolice == "28.32":
+        print("Processando endosso de RCT-VIAGEM INTERN.CARGA")
+        return chubb_rct(texto)
+    elif tipo_apolice == "28.54":
+        print("Processando endosso de RCTR-C")
+        return chubb_rctr(texto)
+    elif tipo_apolice == "28.55":
+        print("Processando endosso de RCF")
+        return chubb_rcf(texto)
+    else:
+        print("Tipo de apólice não identificado, tentando processamento internacional como fallback")
+        return chubb_rcf(texto)

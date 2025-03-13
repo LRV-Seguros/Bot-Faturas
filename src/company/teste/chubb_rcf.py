@@ -1,0 +1,119 @@
+import re
+
+ # Dicionário de meses para conversão
+meses = {
+     "janeiro": "01", "fevereiro": "02", "março": "03", "abril": "04",
+     "maio": "05", "junho": "06", "julho": "07", "agosto": "08",
+     "setembro": "09", "outubro": "10", "novembro": "11", "dezembro": "12"
+ }
+
+def chubb_rcf(texto):
+    """
+    Extrai informações de uma fatura da Chubb para RCF.
+
+    Args:
+        texto (str): Texto completo extraído do PDF
+
+    Returns:
+        list: Lista contendo os dados formatados na ordem requerida para cadastro
+    """
+    dados = []
+    # Divide o texto em linhas para iterar corretamente
+    linhas = texto.split('\n')
+    print("Primeiras 90 linhas do documento:")
+    for i in range(min(90, len(linhas))):
+        print(f"{i}: {linhas[i]}")
+
+    print("Processando documento de RCF")
+
+    nome = None
+    if len(linhas) > 34:
+        linha_nome = linhas[34]
+        nome = linha_nome.strip()
+        print(f"Nome extraído: {nome}")
+
+    ramo = None
+    if len(linhas) > 39:
+        linha_ramo = linhas[39]
+        linha_ramo = linha_ramo.strip()
+        print(f"Ramo extraído: {linha_ramo}")
+
+    apolice = None
+    # Procurando especificamente por 24.55 para RCF
+    for i in range(0, 40):
+        if i < len(linhas):
+            linha = linhas[i]
+            if "28." in linha:
+                match = re.search(r'28\.\d+\.\d+\.\d+', linha)
+                if match:
+                    apolice = match.group(0)
+                    partes = apolice.split('.')
+                    apolice = '.'.join(partes[:-1])
+                    print(f"Apólice extraída: {apolice}")
+                    break
+
+    endosso = None
+    if len(linhas) > 33:
+        linha_endosso = linhas[33]
+        endosso = linha_endosso.strip()
+        print(f"Endosso extraído: {endosso}")
+
+    premio_liquido = None
+    if len(linhas) > 86:
+        linha_premio = linhas[86]
+        premio_liquido = linha_premio.strip()
+        print(f"Prêmio líquido extraído: {premio_liquido}")
+
+    inicio_vigencia = None
+    fim_vigencia = None
+    for i in range(0, 70):
+        if i < len(linhas):
+            linha = linhas[i]
+            datas = re.findall(r'\d{2}/\d{2}/\d{4}', linha)
+            if len(datas) >= 2:  # Se encontrar pelo menos duas datas na linha
+                inicio_vigencia = datas[0]
+                fim_vigencia = datas[-1]
+                print(f"Início de vigência extraído: {inicio_vigencia}")
+                print(f"Fim de vigência extraído: {fim_vigencia}")
+                break
+
+    emissao = None
+    if len(linhas) > 62:
+        linha_emissao = linhas[62].lower()
+        # Procurar data no formato "14DEFEVEREIRO DE2025"
+        for mes_nome, mes_num in meses.items():
+            if mes_nome in linha_emissao:
+                # Extrair números do início da string (dia)
+                dia_match = re.search(r'(\d{1,2})', linha_emissao)
+                # Extrair números de 4 dígitos (ano)
+                ano_match = re.search(r'de(\d{4})', linha_emissao, re.IGNORECASE)
+
+                if dia_match and ano_match:
+                    dia = dia_match.group(1).strip().zfill(2)
+                    ano = ano_match.group(1).strip()
+                    emissao = f"{dia}/{mes_num}/{ano}"
+                    print(f"Emissão extraída: {emissao}")
+                    break
+
+    vencimento = None
+    if len(linhas) > 63:
+        linha_vencimento = linhas[63]
+        if "/" in linha_vencimento:
+            match = re.search(r'\d{2}/\d{2}/\d{4}', linha_vencimento)
+            if match:
+                vencimento = match.group(0)
+                print(f"Vencimento extraído: {vencimento}")
+
+    # Montar array de dados - removido da condição para garantir o retorno
+    dados.append(apolice)
+    dados.append(endosso)
+    dados.append(emissao)  # Data da proposta (usando data de emissão)
+    dados.append(inicio_vigencia)
+    dados.append(inicio_vigencia)
+    dados.append(fim_vigencia)
+    dados.append(emissao)
+    dados.append(premio_liquido)
+    dados.append(vencimento)
+
+    print(f"Dados extraídos: {dados}")
+    return dados
