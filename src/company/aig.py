@@ -18,15 +18,16 @@ def aig(texto):
     '''
     dados = []
     linhas = texto.split('\n')
+
     print("Primeiras 90 linhas do documento:")
     for i in range(min(90, len(linhas))):
         print(f"{i}: {linhas[i]}")
     cont = 0
 
     nome = None
-    if len(linhas) > 30:
-        linha_nome = linhas[30]
-        nome = linha_nome.strip()
+    if len(linhas) > 41:
+        linha_nome = linhas[41]
+        nome = linha_nome.strip().replace(' MECNPJ', '')
         print(f"Nome extraído: {nome}")
 
     for linha in linhas:

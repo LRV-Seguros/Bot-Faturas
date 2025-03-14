@@ -80,3 +80,37 @@ def registrar_error (nome_arquivo, seguradora, fatura, erro):
         data_atual = datetime.now()
         data_formatada = data_atual.strftime("%d/%m/%Y %H:%M:%S")
         arquivo.write(f'Erro ao processar a fatura {fatura} da seguradora {seguradora} no dia {data_formatada}: {erro}' + "\n" "- Fatura/Apólice {fatura} - Endosso {endosso}")
+
+# def registrar_error (nome_arquivo, seguradora, fatura, erro):
+#     """
+#     Registra um erro no arquivo de log.
+
+#     Args:
+#         nome_arquivo: Nome do arquivo de log
+#         seguradora: Nome da seguradora
+#         fatura: Número da fatura
+#         erro: Mensagem de erro
+#     """
+#     with open(nome_arquivo, "a") as arquivo:
+#         data_atual = datetime.now()
+#         data_formatada = data_atual.strftime("%d/%m/%Y %H:%M:%S")
+#         arquivo.write(f'Erro ao processar a fatura {fatura} da seguradora {seguradora} no dia {data_formatada}: {erro}' + "\n" "- Fatura/Apólice {fatura} - Endosso {endosso}")
+
+# def registrar_error(nome_arquivo, seguradora, fatura, erro, endosso=None):
+#     """
+#     Registra um erro no arquivo de log.
+
+#     Args:
+#         nome_arquivo: Nome do arquivo de log
+#         seguradora: Nome da seguradora
+#         fatura: Número da fatura ou apólice
+#         erro: Mensagem de erro
+#         endosso: Número do endosso (opcional)
+#     """
+#     with open(nome_arquivo, "a") as arquivo:
+#         data_atual = datetime.now()
+#         data_formatada = data_atual.strftime("%d/%m/%Y %H:%M:%S")
+#         endosso_info = f" - Endosso {endosso}" if endosso else ""
+#         arquivo.write(f'Erro ao processar a fatura {fatura} da seguradora {seguradora} no dia {data_formatada}: {erro}\n'
+#                      f"- Fatura/Apólice {fatura}{endosso_info}\n"
+#                      f"----------\n")

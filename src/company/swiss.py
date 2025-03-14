@@ -1,4 +1,5 @@
 import calendar
+import re
 
  # Dicionário de meses para conversão
 meses = {
@@ -8,90 +9,90 @@ meses = {
  }
 
 def swiss(texto):
-     dados = []
-     texto = texto.split('\n')
+    dados = []
+    texto = texto.split('\n')
 
-     # Buscando o ramo (não usado no preenchimento, mas mantido para debug)
-     cont = 0
-     for linha in texto:
-         if 'Nº da Proposta:' in linha:
-             ramo = ''
-             ram = ''
-             teste = texto[cont + 1] + ' ' + texto[cont + 2]
-             for t in teste.split(' '):
-                 if t[0].isalpha():
-                     ram = ram + t[0]
-             for r in ram:
-                 if r.isupper():
-                     ramo = ramo + r
-             print(ramo)
-             break
-         cont = cont + 1
+    print("Primeiras 90 linhas do documento:")
+    for i in range(min(90, len(texto))):
+        print(f"{i}: {texto[i]}")
+    cont = 0
 
-     # Buscando número da apólice, endosso e proposta
-     cont = 0
-     for linha in texto:
-         if 'Carga' in linha:
-             apolice = texto[cont + 1].strip()
-             endosso = texto[cont + 2].strip()
-             # Mantido para referência, mas não usado
-             n_proposta = texto[cont + 3].strip()
-             dados.append(apolice)  # dados[0] - N° apólice coletiva
-             dados.append(endosso)  # dados[1] - N° endosso
-             break
-         cont = cont + 1
+    nome = None
+    if len(texto) > 13:
+        linha_nome = texto[13]
+        nome = linha_nome.strip()
+        print(f"Nome extraído: {nome}")
 
-     # Buscando datas de vigência e emissão
-     cont = 0
-     for linha in texto:
-         if 'Modalidade:' in linha:
-             emissao = texto[cont + 2].split(' ')[0].strip()
-             vigencia = texto[cont + 4].split('.')[0].strip()
-             print(emissao)
-             print(vigencia)
+    cont = 0
+    for linha in texto:
+        if 'Nº da Proposta:' in linha:
+            ramo = ''
+            ram = ''
+            teste = texto[cont + 1] + ' ' + texto[cont + 2]
+            for t in teste.split(' '):
+                if t[0].isalpha():
+                    ram = ram + t[0]
+            for r in ram:
+                if r.isupper():
+                    ramo = ramo + r
+            print(f"Ramo extraído: {ramo}")
+            break
+        cont = cont + 1
 
-             # Processando a data de vigência
-             data = vigencia
-             mes_texto, ano = data.split("/")
-             mes = meses[mes_texto.lower()]
-             ultimo_dia = calendar.monthrange(int(ano), int(mes))[1]
-             primeiro_dia = f"01/{mes}/{ano}"
-             ultimo_dia_formatado = f"{ultimo_dia}/{mes}/{ano}"
+    cont = 0
+    for linha in texto:
+        if 'Carga' in linha:
+            apolice = texto[cont + 1].strip()
+            print(f"Apólice extraída: {apolice}")
+            endosso = texto[cont + 2].strip().lstrip('0')
+            print(f"Endosso extraído: {endosso}")
+            break
+        cont = cont + 1
 
-             # Adicionando as datas na ordem correta
-             # dados[2] - Data da proposta (usando data de emissão)
-             dados.append(emissao)
-             dados.append(primeiro_dia)  # dados[3] - Data inicial vigência
-             # dados[4] - Data inicial vigência (duplicada)
-             dados.append(primeiro_dia)
-             # dados[5] - Data final vigência
-             dados.append(ultimo_dia_formatado)
-             dados.append(emissao)  # dados[6] - Data emissão
-             break
-         cont = cont + 1
+    cont = 0
+    for linha in texto:
+        if 'Modalidade:' in linha:
+            emissao = texto[cont + 2].split(' ')[0].strip()
+            vigencia = texto[cont + 4].split('.')[0].strip()
+            print(f"Emissão extraída: {emissao}")
+            data = vigencia
+            mes_texto, ano = data.split("/")
+            mes = meses[mes_texto.lower()]
+            ultimo_dia = calendar.monthrange(int(ano), int(mes))[1]
+            inicio_vigencia = f"01/{mes}/{ano}"
+            print(f"Início de vigência extraído: {inicio_vigencia}")
+            fim_vigencia = f"{ultimo_dia}/{mes}/{ano}"
+            print(f"Fim de vigência extraído: {fim_vigencia}")
+            break
+        cont = cont + 1
 
-     # Buscando prêmio líquido
-     cont = 0
-     for linha in texto:
-         if 'Prêmio Total (R$):' in linha:
-             premio_liquido = texto[cont + 1].split(' ')[-1].strip()
-             premio_bruto = texto[cont + 5].split(' ')[-1].strip()
-             print(premio_liquido)
-             dados.append(premio_liquido)  # dados[7] - Prêmio líquido
-             print(premio_bruto)
-             break
-         cont = cont + 1
+    cont = 0
+    for linha in texto:
+        if 'Prêmio Total (R$):' in linha:
+            premio_liquido = texto[cont + 1].split(' ')[-1].strip()
+            premio_bruto = texto[cont + 5].split(' ')[-1].strip()
+            print(f"Prêmio líquido extraído: {premio_liquido}")
+            print(f"Prêmio líquido bruto: {premio_bruto}")
+            break
+        cont = cont + 1
 
-     # Buscando data de vencimento
-     cont = 0
-     for linha in texto:
-         if 'CONDIÇÕES GERAIS' in linha:
-             vencimento = texto[cont - 1].strip()
-             print(vencimento)
-             dados.append(vencimento)  # dados[8] - Data vencimento
-             break
-         cont = cont + 1
+    vencimento = None
+    if len(texto) > 88:
+        linha_vencimento = texto[88]
+        if "/" in linha_vencimento:
+            match = re.search(r'\d{2}/\d{2}/\d{4}', linha_vencimento)
+            if match:
+                vencimento = match.group(0)
+                print(f"Vencimento extraído: {vencimento}")
 
-     print(dados)
+    dados.append(apolice)
+    dados.append(endosso)
+    dados.append(inicio_vigencia)
+    dados.append(inicio_vigencia)
+    dados.append(fim_vigencia)
+    dados.append(emissao)
+    dados.append(premio_liquido)
+    dados.append(vencimento)
 
-     return dados
+    print(dados)
+    return dados

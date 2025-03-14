@@ -11,28 +11,28 @@ def chubb_internacional(texto):
         list: Lista contendo os dados formatados na ordem requerida para cadastro
     """
     dados = []
-    linhas = texto.split('\n')
-    print("Primeiras 90 linhas do documento:")
-    for i in range(min(90, len(linhas))):
-        print(f"{i}: {linhas[i]}")
+    texto = texto.split('\n')
+    print("Primeiras 90 texto do documento:")
+    for i in range(min(90, len(texto))):
+        print(f"{i}: {texto[i]}")
 
     print("Processando documento de TRANSPORTE INTERNACIONAL")
 
     nome = None
-    if len(linhas) > 30:
-        linha_nome = linhas[30]
+    if len(texto) > 30:
+        linha_nome = texto[30]
         nome = linha_nome.strip()
         print(f"Nome extraído: {nome}")
 
     ramo = None
-    if len(linhas) > 35:
-        linha_ramo = linhas[35]
+    if len(texto) > 35:
+        linha_ramo = texto[35]
         linha_ramo = linha_ramo.strip()
         print(f"Ramo extraído: {linha_ramo}")
 
     apolice = None
-    if len(linhas) > 28:
-        linha_apolice = linhas[28]
+    if len(texto) > 28:
+        linha_apolice = texto[28]
         if "28." in linha_apolice:
             match = re.search(r'28\.\d+\.\d+\.\d+', linha_apolice)
             if match:
@@ -42,23 +42,23 @@ def chubb_internacional(texto):
                 print(f"Apólice extraída: {apolice}")
 
     endosso = None
-    if len(linhas) > 29:
-        linha_endosso = linhas[29]
+    if len(texto) > 29:
+        linha_endosso = texto[29]
         endosso = linha_endosso.strip()
         print(f"Endosso extraído: {endosso}")
 
 
     premio_liquido = None
-    if len(linhas) > 82:
-        linha_premio = linhas[82]
+    if len(texto) > 82:
+        linha_premio = texto[82]
         premio_liquido = linha_premio.strip()
         print(f"Prêmio líquido extraído: {premio_liquido}")
 
     inicio_vigencia = None
     fim_vigencia = None
     for i in range(0, 70):
-        if i < len(linhas):
-            linha = linhas[i]
+        if i < len(texto):
+            linha = texto[i]
             datas = re.findall(r'\d{2}/\d{2}/\d{4}', linha)
             if len(datas) >= 2:  # Se encontrar pelo menos duas datas na linha
                 inicio_vigencia = datas[0]
@@ -68,8 +68,8 @@ def chubb_internacional(texto):
                 break
 
     emissao = None
-    if len(linhas) > 11:
-        linha_emissao = linhas[11]
+    if len(texto) > 11:
+        linha_emissao = texto[11]
         if "/" in linha_emissao:
             match = re.search(r'\d{2}/\d{2}/\d{4}', linha_emissao)
             if match:
@@ -77,8 +77,8 @@ def chubb_internacional(texto):
                 print(f"Emissão extraída: {emissao}")
 
     vencimento = None
-    if len(linhas) > 10:
-        linha_vencimento = linhas[10]
+    if len(texto) > 10:
+        linha_vencimento = texto[10]
         if "/" in linha_vencimento:
             match = re.search(r'\d{2}/\d{2}/\d{4}', linha_vencimento)
             if match:

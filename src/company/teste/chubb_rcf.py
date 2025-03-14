@@ -18,31 +18,31 @@ def chubb_rcf(texto):
         list: Lista contendo os dados formatados na ordem requerida para cadastro
     """
     dados = []
-    # Divide o texto em linhas para iterar corretamente
-    linhas = texto.split('\n')
-    print("Primeiras 90 linhas do documento:")
-    for i in range(min(90, len(linhas))):
-        print(f"{i}: {linhas[i]}")
+    # Divide o texto em texto para iterar corretamente
+    texto = texto.split('\n')
+    print("Primeiras 90 texto do documento:")
+    for i in range(min(90, len(texto))):
+        print(f"{i}: {texto[i]}")
 
     print("Processando documento de RCF")
 
     nome = None
-    if len(linhas) > 34:
-        linha_nome = linhas[34]
+    if len(texto) > 34:
+        linha_nome = texto[34]
         nome = linha_nome.strip()
         print(f"Nome extraído: {nome}")
 
     ramo = None
-    if len(linhas) > 39:
-        linha_ramo = linhas[39]
+    if len(texto) > 39:
+        linha_ramo = texto[39]
         linha_ramo = linha_ramo.strip()
         print(f"Ramo extraído: {linha_ramo}")
 
     apolice = None
     # Procurando especificamente por 24.55 para RCF
     for i in range(0, 40):
-        if i < len(linhas):
-            linha = linhas[i]
+        if i < len(texto):
+            linha = texto[i]
             if "28." in linha:
                 match = re.search(r'28\.\d+\.\d+\.\d+', linha)
                 if match:
@@ -53,22 +53,22 @@ def chubb_rcf(texto):
                     break
 
     endosso = None
-    if len(linhas) > 33:
-        linha_endosso = linhas[33]
+    if len(texto) > 33:
+        linha_endosso = texto[33]
         endosso = linha_endosso.strip()
         print(f"Endosso extraído: {endosso}")
 
     premio_liquido = None
-    if len(linhas) > 86:
-        linha_premio = linhas[86]
+    if len(texto) > 83:
+        linha_premio = texto[83]
         premio_liquido = linha_premio.strip()
         print(f"Prêmio líquido extraído: {premio_liquido}")
 
     inicio_vigencia = None
     fim_vigencia = None
     for i in range(0, 70):
-        if i < len(linhas):
-            linha = linhas[i]
+        if i < len(texto):
+            linha = texto[i]
             datas = re.findall(r'\d{2}/\d{2}/\d{4}', linha)
             if len(datas) >= 2:  # Se encontrar pelo menos duas datas na linha
                 inicio_vigencia = datas[0]
@@ -78,8 +78,8 @@ def chubb_rcf(texto):
                 break
 
     emissao = None
-    if len(linhas) > 62:
-        linha_emissao = linhas[62].lower()
+    if len(texto) > 59:
+        linha_emissao = texto[59].lower()
         # Procurar data no formato "14DEFEVEREIRO DE2025"
         for mes_nome, mes_num in meses.items():
             if mes_nome in linha_emissao:
@@ -96,8 +96,8 @@ def chubb_rcf(texto):
                     break
 
     vencimento = None
-    if len(linhas) > 63:
-        linha_vencimento = linhas[63]
+    if len(texto) > 60:
+        linha_vencimento = texto[60]
         if "/" in linha_vencimento:
             match = re.search(r'\d{2}/\d{2}/\d{4}', linha_vencimento)
             if match:
