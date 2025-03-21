@@ -88,5 +88,7 @@ def sompo(texto):
             break
         cont = cont + 1
 
+    dados.append(nome)
+
     print(dados)
     return dados

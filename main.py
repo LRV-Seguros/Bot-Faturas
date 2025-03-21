@@ -3,7 +3,7 @@ from seleniumbase import Driver
 from datetime import datetime
 
 # Importando configurações
-from src.config.settings import TIPO_SEGURADORA, LOG_FILE
+from src.config.settings import TIPO_SEGURADORA, LOG_FILE, ERROR_LOG_FILE
 
 # Importando as funções de processamento de cada companhia
 from src.company.swiss import swiss
@@ -22,6 +22,7 @@ from src.utils.logging_config import setup_logging
 # Importando serviços
 from src.services.email_handler import baixar_emails
 from src.services.web_automation import quiver
+from src.services.error_notification import notificar_erros
 
 # Configuração do logger
 logger = setup_logging()
@@ -42,12 +43,21 @@ else:
     with open(nome_arquivo, "w") as arquivo:
         pass
 
+# Verificar e criar o arquivo de log de erros se não existir
+if not os.path.exists(ERROR_LOG_FILE):
+    with open(ERROR_LOG_FILE, "w") as arquivo:
+        pass
+
 driver = Driver(uc=True, headless=False)
 driver.maximize_window()
 
 # Processamento de emails
-lista_documentos, lista_pdfs = baixar_emails(driver, lista_documentos, lista_pdfs)
-driver.quit()
+try:
+    lista_documentos, lista_pdfs = baixar_emails(driver, lista_documentos, lista_pdfs)
+except Exception as e:
+    logger.error(f"Erro ao baixar emails: {e}", exc_info=True)
+finally:
+    driver.quit()
 
 if len(lista_documentos) > 0:
     for documento in lista_documentos:
@@ -200,3 +210,13 @@ if len(lista_documentos) > 0:
 # Remover os arquivos processados
 remover_arquivos(lista_documentos)
 logger.info("Processamento concluído")
+
+# Enviar notificações de erro via WhatsApp
+try:
+    # Verificar se existem erros para notificar
+    if os.path.exists(ERROR_LOG_FILE) and os.path.getsize(ERROR_LOG_FILE) > 0:
+        logger.info("Enviando notificações de erro via WhatsApp")
+        notificar_erros()
+        logger.info("Notificações de erro enviadas com sucesso")
+except Exception as e:
+    logger.error(f"Erro ao enviar notificações de erro: {e}", exc_info=True)

@@ -80,6 +80,7 @@ def aig(texto):
     dados.append(emissao)
     dados.append(premio_liquido)
     dados.append(vencimento)
+    dados.append(nome)
 
     print(dados)
     return dados

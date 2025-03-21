@@ -27,3 +27,7 @@ TIPO_SEGURADORA = {
 
 # Configurações de arquivos
 LOG_FILE = 'feitos.txt'
+ERROR_LOG_FILE = 'error_log.txt'
+
+# Configurações de notificação
+ADMIN_PHONE = '553199443174'  # Número do administrador para receber notificações de erro

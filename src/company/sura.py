@@ -87,5 +87,5 @@ def sura(texto):
     print(dados)
 
     # Garantir que os dados estejam na ordem esperada
-    dados = [apolice, fatura, data_proposta, inicio_vig, fim_vig, data_emissao,premio_liquido, vencimento]
+    dados = [apolice, fatura, data_proposta, inicio_vig, fim_vig, data_emissao,premio_liquido, vencimento,nome]
     return dados

@@ -82,5 +82,7 @@ def berkley(texto):
             dados.append(vencimento)  # dados[8] - data vencimento
             break
 
+    dados.append(nome)
+
     print("Dados compilados:", dados)
     return dados
