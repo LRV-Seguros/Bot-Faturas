@@ -46,50 +46,50 @@ O sistema segue uma arquitetura modular baseada em componentes Python, com as se
 ## Estrutura do Projeto
 
 ```
-├── downloaded_files                    # Diretório para arquivos temporários baixados
-│   ├── driver_fixing.lock              # Arquivo de lock para evitar múltiplas instâncias do driver
-│   └── pyautogui.lock                  # Arquivo de lock para operações do PyAutoGUI
-├── error_log.txt                       # Registro centralizado de erros
-├── executar_automacao.bat              # Script para execução no Windows
-├── main.py                             # Ponto de entrada principal da aplicação
-├── requirements.txt                    # Dependências do projeto
-└── src                                 # Código-fonte da aplicação
-    ├── .gitignore                      # Arquivos ignorados pelo controle de versão
-    ├── assets                          # Recursos estáticos
-    │   └── img                         # Imagens e diagramas
+├── downloaded_files                               # Diretório para arquivos temporários baixados
+│   ├── driver_fixing.lock                         # Arquivo de lock para evitar múltiplas instâncias do driver
+│   └── pyautogui.lock                             # Arquivo de lock para operações do PyAutoGUI
+├── error_log.txt                                  # Registro centralizado de erros
+├── executar_automacao.bat                         # Script para execução no Windows
+├── main.py                                        # Ponto de entrada principal da aplicação
+├── requirements.txt                               # Dependências do projeto
+└── src                                            # Código-fonte da aplicação
+    ├── .gitignore                                 # Arquivos ignorados pelo controle de versão
+    ├── assets                                     # Recursos estáticos
+    │   └── img                                    # Imagens e diagramas
     │       └── arquitetura_sistema_automacao.svg  # Diagrama de arquitetura
-    ├── company                         # Processadores específicos por seguradora
-    │   ├── __init__.py                 # Torna o diretório um pacote Python
-    │   ├── aig.py                      # Extração de dados da AIG
-    │   ├── axa.py                      # Extração de dados da AXA
-    │   ├── berkley.py                  # Extração de dados da Berkley
-    │   ├── chubb.py                    # Extração de dados da Chubb
-    │   ├── fairfax.py                  # Extração de dados da Fairfax
-    │   ├── sompo.py                    # Extração de dados da Sompo
-    │   ├── sura.py                     # Extração de dados da Sura
-    │   ├── swiss.py                    # Extração de dados da Swiss
-    │   └── teste                       # Subprocessadores para tipos específicos
-    │       ├── __init__.py             # Torna o subdiretório um pacote Python
-    │       ├── chubb_internacional.py  # Processador para Chubb Internacional
-    │       ├── chubb_nacional.py       # Processador para Chubb Nacional
-    │       ├── chubb_rcf.py            # Processador para Chubb RCF
-    │       ├── chubb_rct.py            # Processador para Chubb RCT
-    │       └── chubb_rctr.py           # Processador para Chubb RCTR-C
-    ├── config                          # Configurações do sistema
-    │   ├── __init__.py                 # Torna o diretório um pacote Python
-    │   └── settings.py                 # Configurações e credenciais
-    ├── logs                            # Diretório para armazenamento de logs
-    │   └── .gitkeep                    # Mantém diretório vazio no Git
-    ├── services                        # Serviços compartilhados
-    │   ├── __init__.py                 # Torna o diretório um pacote Python
-    │   ├── email_handler.py            # Serviço de acesso a e-mails
-    │   ├── error_notification.py       # Serviço de notificação de erros
-    │   └── web_automation.py           # Serviço de automação web
-    └── utils                           # Utilitários compartilhados
-        ├── __init__.py                 # Torna o diretório um pacote Python
-        ├── logging_config.py           # Configuração de logs
-        ├── utils.py                    # Funções utilitárias gerais
-        └── whatsapp_notifier.py        # Utilitário de notificação WhatsApp
+    ├── company                                    # Processadores específicos por seguradora
+    │   ├── __init__.py                            # Torna o diretório um pacote Python
+    │   ├── aig.py                                 # Extração de dados da AIG
+    │   ├── axa.py                                 # Extração de dados da AXA
+    │   ├── berkley.py                             # Extração de dados da Berkley
+    │   ├── chubb.py                               # Extração de dados da Chubb
+    │   ├── fairfax.py                             # Extração de dados da Fairfax
+    │   ├── sompo.py                               # Extração de dados da Sompo
+    │   ├── sura.py                                # Extração de dados da Sura
+    │   ├── swiss.py                               # Extração de dados da Swiss
+    │   └── variants                               # Subprocessadores para tipos específicos
+    │       ├── __init__.py                        # Torna o subdiretório um pacote Python
+    │       ├── chubb_internacional.py             # Processador para Chubb Internacional
+    │       ├── chubb_nacional.py                  # Processador para Chubb Nacional
+    │       ├── chubb_rcf.py                       # Processador para Chubb RCF
+    │       ├── chubb_rct.py                       # Processador para Chubb RCT
+    │       └── chubb_rctr.py                      # Processador para Chubb RCTR-C
+    ├── config                                     # Configurações do sistema
+    │   ├── __init__.py                            # Torna o diretório um pacote Python
+    │   └── settings.py                            # Configurações e credenciais
+    ├── logs                                       # Diretório para armazenamento de logs
+    │   └── .gitkeep                               # Mantém diretório vazio no Git
+    ├── services                                   # Serviços compartilhados
+    │   ├── __init__.py                            # Torna o diretório um pacote Python
+    │   ├── email_handler.py                       # Serviço de acesso a e-mails
+    │   ├── error_notification.py                  # Serviço de notificação de erros
+    │   └── web_automation.py                      # Serviço de automação web
+    └── utils                                      # Utilitários compartilhados
+        ├── __init__.py                            # Torna o diretório um pacote Python
+        ├── logging_config.py                      # Configuração de logs
+        ├── utils.py                               # Funções utilitárias gerais
+        └── whatsapp_notifier.py                   # Utilitário de notificação WhatsApp
 ```
 
 ## Fluxo de Processamento

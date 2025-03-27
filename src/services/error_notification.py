@@ -1,9 +1,18 @@
+"""
+Módulo de notificação de erros via WhatsApp
+
+Este módulo contém funções para enviar notificações de erro via WhatsApp
+para os administradores do sistema.
+
+Autor: Lucelho Silva
+"""
 import os
 import re
 from urllib.parse import quote
 from time import sleep
 from datetime import datetime
 from selenium import webdriver
+from src.config.settings import *
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -17,14 +26,7 @@ def configurar_chrome():
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    # Tente encontrar o Chrome no local padrão ou em locais comuns
-    chrome_paths = [
-        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-        "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-        "C:\\Users\\ESTAGIARIO\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe"
-    ]
-
-    for path in chrome_paths:
+    for path in CHORME_PATHS:
         if os.path.exists(path):
             chrome_options.binary_location = path
             break

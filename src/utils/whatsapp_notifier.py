@@ -1,3 +1,13 @@
+
+"""
+Módulo para notificações via WhatsApp
+
+Este módulo implementa funcionalidades para enviar notificações
+via WhatsApp através de automação com Selenium.
+
+Autor: Departamento de Tecnologia - LRV Seguros
+"""
+
 import os
 import time
 import traceback
@@ -9,6 +19,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
+from src.utils.logging_config import setup_logging
+
+logger = setup_logging()
 
 def notificar_erros_whatsapp(arquivo_erros='src/logs/error_documents.txt', numero_telefone='5531994431744'):
     """
@@ -21,6 +34,7 @@ def notificar_erros_whatsapp(arquivo_erros='src/logs/error_documents.txt', numer
     Returns:
         bool: True se a mensagem foi enviada com sucesso, False caso contrário
     """
+
     # Verificar se o arquivo existe
     if not os.path.exists(arquivo_erros):
         print(f"Arquivo de erros {arquivo_erros} não encontrado.")

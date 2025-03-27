@@ -1,3 +1,11 @@
+"""
+Módulo de automação web para cadastro de faturas no sistema Corretor Online
+
+Este módulo contém as funções principais para automação do processo de cadastro
+de faturas no sistema Corretor Online.
+
+Autor: Lucelho Silva
+"""
 import os
 import time
 import threading
@@ -5,18 +13,14 @@ from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, WebDriverException
-from src.config.settings import CORRETOR_ONLINE, CORRETOR_URL
+from src.config.settings import *
 from src.utils.logging_config import setup_logging
 from src.utils.utils import registrar_error
-
-# Configurações
-MAX_TIMEOUT = 300  # Timeout máximo em segundos (3 minutos)
-ERROR_LOG_FILE = "error_log.txt"  # Arquivo central para registro de erros
 
 logger = setup_logging()
 
 class TimeoutError(Exception):
-    """Erro para indicar que uma operação excedeu o tempo limite"""
+    """Erro customizado para indicar que uma operação excedeu o tempo limite"""
     pass
 
 def timeout_handler():
@@ -25,13 +29,15 @@ def timeout_handler():
 
 def quiver(dados, arquivos, tipo_seguradora=1):
     """
-    Função unificada para automatização do preenchimento no sistema com timeout.
+    Função principal para automação do preenchimento no sistema com controle de timeout.
 
     Args:
-        dados: Lista com os dados extraídos do PDF
-        arquivos: Lista com os caminhos dos arquivos a serem anexados
-        tipo_seguradora: 1 para Swiss, Fairfax, Berkley; 2 para Sura, Sompo, AXA, AIG
+        dados (list): Lista com os dados extraídos do PDF
+        arquivos (list): Lista com os caminhos dos arquivos a serem anexados
+        tipo_seguradora (int): 1 para Swiss, Fairfax, Berkley; 2 para Sura, Sompo, AXA, AIG
     """
+
+    # Preparação dos caminhos de arquivo com path absoluto
     diretorio_corrente = os.getcwd()
     arquivos = [os.path.join(diretorio_corrente, nome) for nome in arquivos[1:]]
     driver = None
@@ -42,7 +48,7 @@ def quiver(dados, arquivos, tipo_seguradora=1):
     nome = dados[-1] if dados and len(dados) > 8 else None
     seguradora = arquivos[0].split('/')[-1].split(' - ')[-1].split('.')[0] if arquivos else "N/A"
 
-    # Timer para timeout
+    # Timer para timeout - interrompe a execução se demorar demais
     timer = threading.Timer(MAX_TIMEOUT, timeout_handler)
 
     try:

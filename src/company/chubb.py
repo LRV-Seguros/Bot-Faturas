@@ -1,9 +1,20 @@
+"""
+Módulo de processamento de faturas da Chubb
+
+Este módulo identifica o tipo de apólice Chubb e direciona para o
+processador específico adequado ao formato do documento.
+
+Autor: Lucelho Silva
+"""
 import re
-from src.company.teste.chubb_internacional import chubb_internacional
-from src.company.teste.chubb_nacional import chubb_nacional
-from src.company.teste.chubb_rct import chubb_rct
-from src.company.teste.chubb_rctr import chubb_rctr
-from src.company.teste.chubb_rcf import chubb_rcf
+from src.company.variants.chubb_internacional import chubb_internacional
+from src.company.variants.chubb_nacional import chubb_nacional
+from src.company.variants.chubb_rct import chubb_rct
+from src.company.variants.chubb_rctr import chubb_rctr
+from src.company.variants.chubb_rcf import chubb_rcf
+from src.utils.logging_config import setup_logging
+
+logger = setup_logging()
 
 def chubb(texto):
     """
@@ -17,6 +28,8 @@ def chubb(texto):
         list: Lista contendo os dados formatados na ordem requerida para cadastro
     """
     linhas = texto.split('\n')
+
+    logger.info("Processando documento Chubb - Identificando tipo de apólice")
 
     # Identificar tipo de apólice
     apolice = None
@@ -50,5 +63,5 @@ def chubb(texto):
         print("Processando endosso de RCF")
         return chubb_rcf(texto)
     else:
-        print("Tipo de apólice não identificado, tentando processamento internacional como fallback")
+        logger.warning(f"Tipo de apólice não identificado: {tipo_apolice}, usando RCF como fallback")
         return chubb_rcf(texto)

@@ -31,3 +31,13 @@ ERROR_LOG_FILE = 'error_log.txt'
 
 # Configurações de notificação
 ADMIN_PHONE = '553199443174'  # Número do administrador para receber notificações de erro
+
+# Configurações de timeout
+MAX_TIMEOUT = 300  # Timeout máximo em segundos ( 5 minutos )
+ERROR_LOG_FILE = "error_log.txt"  # Arquivo central para registro de erros
+
+CHORME_PATHS = [
+        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+        "C:\\Users\\ESTAGIARIO\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe"
+    ]

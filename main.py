@@ -1,11 +1,22 @@
+"""
+Bot de Automação para Processamento de Faturas de Seguradoras
+
+Este script é o ponto de entrada principal do sistema de automação para processamento
+de faturas de seguradoras. O sistema baixa e-mails com faturas em anexo,
+extrai informações relevantes dos PDFs e insere os dados no sistema Corretor Online.
+
+Autor: Lucelho Silva
+Data de criação: Janeiro/2025
+"""
 import os
 from seleniumbase import Driver
 from datetime import datetime
-
-# Importando configurações
 from src.config.settings import TIPO_SEGURADORA, LOG_FILE, ERROR_LOG_FILE
-
-# Importando as funções de processamento de cada companhia
+from src.utils.utils import ler_pdf_completo, registrar_fatura, remover_arquivos
+from src.utils.logging_config import setup_logging
+from src.services.email_handler import baixar_emails
+from src.services.web_automation import quiver
+from src.services.error_notification import notificar_erros
 from src.company.swiss import swiss
 from src.company.fairfax import fairfax
 from src.company.sura import sura
@@ -14,15 +25,6 @@ from src.company.axa import axa, axa_b
 from src.company.aig import aig
 from src.company.berkley import berkley
 from src.company.chubb import chubb
-
-# Importando funções utilitárias
-from src.utils.utils import ler_pdf_completo, registrar_fatura, remover_arquivos
-from src.utils.logging_config import setup_logging
-
-# Importando serviços
-from src.services.email_handler import baixar_emails
-from src.services.web_automation import quiver
-from src.services.error_notification import notificar_erros
 
 # Configuração do logger
 logger = setup_logging()
