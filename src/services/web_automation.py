@@ -10,7 +10,7 @@ from src.utils.logging_config import setup_logging
 from src.utils.utils import registrar_error
 
 # Configurações
-MAX_TIMEOUT = 20  # Timeout máximo em segundos (3 minutos)
+MAX_TIMEOUT = 300  # Timeout máximo em segundos (3 minutos)
 ERROR_LOG_FILE = "error_log.txt"  # Arquivo central para registro de erros
 
 logger = setup_logging()
